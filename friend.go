@@ -9,7 +9,8 @@ import (
 )
 
 const (
-	addFriend = neteaseBaseURL + "/friend/add.action"
+	addFriend    = neteaseBaseURL + "/friend/add.action"
+	deleteFriend = neteaseBaseURL + "/friend/delete.action"
 )
 
 /**添加好友
@@ -34,6 +35,38 @@ func (c *ImClient) AddFriend(accid, faccid string, friend_type int, msg, servere
 	client.SetFormData(param)
 
 	resp, err := client.Post(addFriend)
+	if err != nil {
+		return nil, err
+	}
+
+	var jsonRes map[string]*json.RawMessage
+	err = jsoniter.Unmarshal(resp.Body(), &jsonRes)
+	if err != nil {
+		return nil, err
+	}
+
+	var code int
+	err = json.Unmarshal(*jsonRes["code"], &code)
+	if err != nil {
+		return nil, err
+	}
+
+	if code != 200 {
+		var msg string
+		json.Unmarshal(*jsonRes["desc"], &msg)
+		return nil, errors.New(msg)
+	}
+
+	return jsonRes, nil
+}
+
+func (c *ImClient) DeleteFriend(accid, faccid string) (map[string]*json.RawMessage, error) {
+	param := map[string]string{"accid": accid, "faccid": faccid}
+	client := c.client.R()
+	c.setCommonHead(client)
+	client.SetFormData(param)
+
+	resp, err := client.Post(deleteFriend)
 	if err != nil {
 		return nil, err
 	}
