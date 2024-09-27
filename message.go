@@ -26,7 +26,7 @@ const (
 	MsgTypeVideo
 )
 
-//SendTextMessage 发送文本消息,消息内容最长5000
+// SendTextMessage 发送文本消息,消息内容最长5000
 func (c *ImClient) SendTextMessage(fromID, toID string, msg *TextMessage, opt *ImSendMessageOption) error {
 	bd, err := jsonTool.MarshalToString(msg)
 	if err != nil {
@@ -35,7 +35,7 @@ func (c *ImClient) SendTextMessage(fromID, toID string, msg *TextMessage, opt *I
 	return c.SendMessage(fromID, toID, bd, 0, MsgTypeText, opt)
 }
 
-//SendBatchTextMessage 批量发送文本消息
+// SendBatchTextMessage 批量发送文本消息
 func (c *ImClient) SendBatchTextMessage(fromID string, toIDs []string, msg *TextMessage, opt *ImSendMessageOption) (string, error) {
 	bd, err := jsonTool.MarshalToString(msg)
 	if err != nil {
@@ -45,7 +45,7 @@ func (c *ImClient) SendBatchTextMessage(fromID string, toIDs []string, msg *Text
 	return c.SendBatchMessage(fromID, bd, toIDs, MsgTypeText, opt)
 }
 
-//SendBatchImageMessage 批量发送图片
+// SendBatchImageMessage 批量发送图片
 func (c *ImClient) SendBatchImageMessage(fromID string, toIDs []string, msg *ImageMessage, opt *ImSendMessageOption) (string, error) {
 	bd, err := jsonTool.MarshalToString(msg)
 	if err != nil {
@@ -55,7 +55,7 @@ func (c *ImClient) SendBatchImageMessage(fromID string, toIDs []string, msg *Ima
 	return c.SendBatchMessage(fromID, bd, toIDs, MsgTypeImage, opt)
 }
 
-//SendBatchVoiceMessage .
+// SendBatchVoiceMessage .
 func (c *ImClient) SendBatchVoiceMessage(fromID string, toIDs []string, msg *VoiceMessage, opt *ImSendMessageOption) (string, error) {
 	bd, err := jsonTool.MarshalToString(msg)
 	if err != nil {
@@ -65,7 +65,7 @@ func (c *ImClient) SendBatchVoiceMessage(fromID string, toIDs []string, msg *Voi
 	return c.SendBatchMessage(fromID, bd, toIDs, MsgTypeVoice, opt)
 }
 
-//SendBatchVideoMessage .
+// SendBatchVideoMessage .
 func (c *ImClient) SendBatchVideoMessage(fromID string, toIDs []string, msg *VideoMessage, opt *ImSendMessageOption) (string, error) {
 	bd, err := jsonTool.MarshalToString(msg)
 	if err != nil {
@@ -212,6 +212,56 @@ func (c *ImClient) SendBatchMessage(fromID, body string, toIDs []string, msgType
 	}
 
 	return string(resp.Body()), nil
+}
+
+// SendAttachMsg 发送自定义系统通知
+func (c *ImClient) SendAttachMsg(from string, msgtype int, to string, attach string, opt *ImSendAttachMessageOption) error {
+	param := map[string]string{"from": from, "msgtype": strconv.Itoa(msgtype), "to": to, "attach": attach}
+
+	if opt != nil {
+		if len(opt.Pushcontent) > 0 {
+			param["pushcontent"] = opt.Pushcontent
+		}
+
+		if len(opt.Payload) > 0 {
+			param["payload"] = opt.Payload
+		}
+
+		if len(opt.Sound) > 0 {
+			param["sound"] = opt.Payload
+		}
+
+		if opt.Save == 1 || opt.Save == 2 {
+			param["save"] = strconv.Itoa(opt.Save)
+		}
+
+		if opt.Option != nil {
+			param["option"], _ = jsonTool.MarshalToString(opt.Option)
+		}
+	}
+	client := c.client.R()
+	c.setCommonHead(client)
+	client.SetFormData(param)
+
+	resp, err := client.Post(messageRecallPoint)
+	if err != nil {
+		return err
+	}
+
+	var jsonRes map[string]*json.RawMessage
+	jsonTool.Unmarshal(resp.Body(), &jsonRes)
+
+	var code int
+	err = json.Unmarshal(*jsonRes["code"], &code)
+	if err != nil {
+		return err
+	}
+
+	if code != 200 {
+		return errors.New(string(resp.Body()))
+	}
+
+	return nil
 }
 
 //SendBatchAttachMsg 批量发送点对点自定义系统通知

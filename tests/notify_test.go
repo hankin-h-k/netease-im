@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	netease "github.com/MrSong0607/netease-im"
+	netease "github.com/hankin-h-k/netease-im"
 )
 
 func TestCheckSum(t *testing.T) {
