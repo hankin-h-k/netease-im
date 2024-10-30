@@ -8,11 +8,11 @@ import (
 )
 
 const (
-	joinTeam       = neteaseBaseURL + "/team/add.action"           // 加入群聊（高级群）
-	leaveTam       = neteaseBaseURL + "team/leave.action"          // 主动退群 （高级群）
-	updateTeamNick = neteaseBaseURL + "team/updateTeamNick.action" // 修改群成员昵称 （高级群）
-	removeTeam     = neteaseBaseURL + "team/remove.action"         // 解散群 （高级群）
-	kickTeam       = neteaseBaseURL + "team/kick.action"           // 踢人出群 （高级群）
+	joinTeam       = neteaseBaseURL + "/team/add.action"            // 加入群聊（高级群）
+	leaveTam       = neteaseBaseURL + "/team/leave.action"          // 主动退群 （高级群）
+	updateTeamNick = neteaseBaseURL + "/team/updateTeamNick.action" // 修改群成员昵称 （高级群）
+	removeTeam     = neteaseBaseURL + "/team/remove.action"         // 解散群 （高级群）
+	kickTeam       = neteaseBaseURL + "/team/kick.action"           // 踢人出群 （高级群）
 
 )
 
