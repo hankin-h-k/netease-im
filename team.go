@@ -15,8 +15,8 @@ const (
 
 )
 
-func (c *ImClient) JoinTeam(tid, owner, members string) (map[string]*json.RawMessage, error) {
-	param := map[string]string{"tid": tid, "owner": owner, "members": members}
+func (c *ImClient) JoinTeam(tid, owner, members, msg string) (map[string]*json.RawMessage, error) {
+	param := map[string]string{"tid": tid, "owner": owner, "members": members, "msg": msg}
 	client := c.client.R()
 	c.setCommonHead(client)
 	client.SetFormData(param)
