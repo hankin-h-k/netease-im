@@ -145,7 +145,10 @@ func (c *ImClient) RemoveTeam(tid, owner string) (map[string]*json.RawMessage, e
 }
 
 func (c *ImClient) KickBatchTeam(tid, owner, members, attach string) (map[string]*json.RawMessage, error) {
-	param := map[string]string{"tid": tid, "owner": owner, "members": members, "attach": attach}
+	param := map[string]string{"tid": tid, "owner": owner, "members": members}
+	if len(attach) > 0 {
+		param["attach"] = attach
+	}
 	client := c.client.R()
 	c.setCommonHead(client)
 	client.SetFormData(param)
@@ -177,7 +180,10 @@ func (c *ImClient) KickBatchTeam(tid, owner, members, attach string) (map[string
 }
 
 func (c *ImClient) KickTeam(tid, owner, member, attach string) (map[string]*json.RawMessage, error) {
-	param := map[string]string{"tid": tid, "owner": owner, "member": member, "attach": attach}
+	param := map[string]string{"tid": tid, "owner": owner, "member": member}
+	if len(attach) > 0 {
+		param["attach"] = attach
+	}
 	client := c.client.R()
 	c.setCommonHead(client)
 	client.SetFormData(param)
