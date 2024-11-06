@@ -12,7 +12,6 @@ const (
 	neteaseBaseURL    = "https://api.netease.im/nimserver"
 	createImUserPoint = neteaseBaseURL + "/user/create.action"
 	refreshTokenPoint = neteaseBaseURL + "/user/refreshToken.action"
-	UpdateImUserPoint = neteaseBaseURL + "/user/updateUinfo.action"
 )
 
 //CreateImUser 创建网易云通信ID
@@ -97,64 +96,6 @@ func (c *ImClient) CreateImUser(u *ImUser) (*TokenInfo, error) {
 	}
 
 	return tk, nil
-}
-
-func (c *ImClient) UpdateImUser(u *ImUser) (int, error) {
-	param := map[string]string{"accid": u.ID}
-
-	if len(u.Name) > 0 {
-		param["name"] = u.Name
-	}
-	if len(u.IconURL) > 0 {
-		param["icon"] = u.IconURL
-	}
-	if len(u.Sign) > 0 {
-		param["sign"] = u.Sign
-	}
-	if len(u.Email) > 0 {
-		param["email"] = u.Email
-	}
-	if len(u.Birthday) > 0 {
-		param["birth"] = u.Birthday
-	}
-	if len(u.Mobile) > 0 {
-		param["mobile"] = u.Mobile
-	}
-	if u.Gender == 1 || u.Gender == 2 {
-		param["gender"] = strconv.Itoa(u.Gender)
-	}
-	if len(u.Extension) > 0 {
-		param["ex"] = u.Extension
-	}
-
-	client := c.client.R()
-	c.setCommonHead(client)
-	client.SetFormData(param)
-
-	resp, err := client.Post(UpdateImUserPoint)
-	if err != nil {
-		return 0, err
-	}
-
-	var jsonRes map[string]*json.RawMessage
-	err = jsoniter.Unmarshal(resp.Body(), &jsonRes)
-	if err != nil {
-		return 0, err
-	}
-
-	var code int
-	err = json.Unmarshal(*jsonRes["code"], &code)
-	if err != nil {
-		return code, err
-	}
-
-	if code != 200 {
-		var msg string
-		json.Unmarshal(*jsonRes["desc"], &msg)
-		return code, errors.New(msg)
-	}
-
-	return code, nil
 }
 
 //RefreshToken 更新并获取新token
