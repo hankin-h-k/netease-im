@@ -44,13 +44,7 @@ func (c *ImClient) GetImUser(accIds []string) (map[string]*json.RawMessage, erro
 		return nil, errors.New(msg)
 	}
 
-	res := map[string]*json.RawMessage{}
-	err = jsoniter.Unmarshal(*jsonRes["uinfos"], &res)
-	if err != nil {
-		return nil, err
-	}
-
-	return res, nil
+	return jsonRes, nil
 }
 
 func (c *ImClient) UpdateImUser(u *ImUser) (int, error) {
