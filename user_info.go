@@ -45,7 +45,7 @@ func (c *ImClient) GetImUser(accIds []string) (map[string]*json.RawMessage, erro
 	}
 
 	res := map[string]*json.RawMessage{}
-	err = jsoniter.Unmarshal(*jsonRes["info"], &res)
+	err = jsoniter.Unmarshal(*jsonRes["uinfos"], &res)
 	if err != nil {
 		return nil, err
 	}
