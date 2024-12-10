@@ -11,6 +11,8 @@ import (
 const (
 	addFriend    = neteaseBaseURL + "/friend/add.action"
 	deleteFriend = neteaseBaseURL + "/friend/delete.action"
+	firendList   = neteaseBaseURL + "/friend/get.action"
+	isFriend     = neteaseBaseURL + "/friend/getByAccid.action"
 )
 
 /**添加好友
@@ -60,6 +62,11 @@ func (c *ImClient) AddFriend(accid, faccid string, friend_type int, msg, servere
 	return jsonRes, nil
 }
 
+//DeleteFriend
+/**
+ * @param accid 发起者
+ * @param faccid 被删除好友
+ */
 func (c *ImClient) DeleteFriend(accid, faccid string) (map[string]*json.RawMessage, error) {
 	param := map[string]string{"accid": accid, "faccid": faccid}
 	client := c.client.R()
@@ -67,6 +74,83 @@ func (c *ImClient) DeleteFriend(accid, faccid string) (map[string]*json.RawMessa
 	client.SetFormData(param)
 
 	resp, err := client.Post(deleteFriend)
+	if err != nil {
+		return nil, err
+	}
+
+	var jsonRes map[string]*json.RawMessage
+	err = jsoniter.Unmarshal(resp.Body(), &jsonRes)
+	if err != nil {
+		return nil, err
+	}
+
+	var code int
+	err = json.Unmarshal(*jsonRes["code"], &code)
+	if err != nil {
+		return nil, err
+	}
+
+	if code != 200 {
+		var msg string
+		json.Unmarshal(*jsonRes["desc"], &msg)
+		return nil, errors.New(msg)
+	}
+
+	return jsonRes, nil
+}
+
+//FriendList
+/**
+ * @param accid 发起者
+ * @param time 查询这个时间后的好友
+ */
+func (c *ImClient) FriendList(accid string, time int64) (map[string]*json.RawMessage, error) {
+	param := map[string]string{"accid": accid}
+	param["updatetime"] = strconv.Itoa(int(time))
+
+	client := c.client.R()
+	c.setCommonHead(client)
+	client.SetFormData(param)
+
+	resp, err := client.Post(firendList)
+	if err != nil {
+		return nil, err
+	}
+
+	var jsonRes map[string]*json.RawMessage
+	err = jsoniter.Unmarshal(resp.Body(), &jsonRes)
+	if err != nil {
+		return nil, err
+	}
+
+	var code int
+	err = json.Unmarshal(*jsonRes["code"], &code)
+	if err != nil {
+		return nil, err
+	}
+
+	if code != 200 {
+		var msg string
+		json.Unmarshal(*jsonRes["desc"], &msg)
+		return nil, errors.New(msg)
+	}
+
+	return jsonRes, nil
+}
+
+//IsFriend 好友关系
+/**
+ * @param accid 发起者
+ * @param faccid 被查询用户
+ */
+func (c *ImClient) IsFriend(accid, faccid string) (map[string]*json.RawMessage, error) {
+	param := map[string]string{"accid": accid}
+	param["faccid"] = faccid
+	client := c.client.R()
+	c.setCommonHead(client)
+	client.SetFormData(param)
+
+	resp, err := client.Post(isFriend)
 	if err != nil {
 		return nil, err
 	}
