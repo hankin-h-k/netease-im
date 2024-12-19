@@ -243,7 +243,7 @@ func (c *ImClient) SendAttachMsg(from string, msgtype int, to string, attach str
 	c.setCommonHead(client)
 	client.SetFormData(param)
 
-	resp, err := client.Post(messageRecallPoint)
+	resp, err := client.Post(sendMsgPoint)
 	if err != nil {
 		return err
 	}
