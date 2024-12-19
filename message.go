@@ -13,6 +13,7 @@ const (
 	sendBatchMsgPoint       = neteaseBaseURL + "/msg/sendBatchMsg.action"
 	sendBatchAttachMsgPoint = neteaseBaseURL + "/msg/sendBatchAttachMsg.action"
 	messageRecallPoint      = neteaseBaseURL + "/msg/recall.action"
+	sendAttachMsgPoint      = neteaseBaseURL + "/msg/sendAttachMsg.action"
 )
 
 const (
@@ -243,7 +244,7 @@ func (c *ImClient) SendAttachMsg(from string, msgtype int, to string, attach str
 	c.setCommonHead(client)
 	client.SetFormData(param)
 
-	resp, err := client.Post(sendMsgPoint)
+	resp, err := client.Post(sendAttachMsgPoint)
 	if err != nil {
 		return err
 	}
